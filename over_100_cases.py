@@ -37,4 +37,9 @@ for country in list(df_gt_100):
         name=country,
     ))
 
+# Make the plot look fancy. 
+fig.update_layout(title='COVID-19 Cases from First Day Above 100 Cases',
+                   xaxis_title='Day Number',
+                   yaxis_title='Cases')
+    
 fig.show()

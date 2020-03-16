@@ -17,4 +17,10 @@ for country in list(df):
         name=country,
     ))
 
+# Make the plot look fancy. 
+fig.update_layout(title='COVID-19 Cases',
+                   xaxis_title='Date',
+                   yaxis_title='Cases')
+
+    
 fig.show()

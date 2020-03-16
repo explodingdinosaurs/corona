@@ -21,9 +21,11 @@ x = np.array(df.index)
 x = x[:y.shape[0]]
 
 # Fit with polyfit
-b, m = np.polyfit(x, y, 1)
+# log(cases) = a*days + b
+# y = a*x + b
+a, b = np.polyfit(x, y, 1)
+print(f'a: {a}')
 print(f'b: {b}')
-print(f'm: {m}')
 plt.plot(np.unique(x), np.poly1d(np.polyfit(x, y, 1))(np.unique(x)))
 plt.plot(x,y)
 plt.show()
