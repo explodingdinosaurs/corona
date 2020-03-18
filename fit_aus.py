@@ -26,18 +26,13 @@ x = x[:y.shape[0]]
 a, b = np.polyfit(x, y, 1)
 print(f'a: {a}')
 print(f'b: {b}')
+
+# Solve for australian population
+# (log(cases)-b)/a = x
+days = (np.log10(24.6E6) - b)/a
+days_until_all_infected = days-x.shape[0]
+
+print(f'entire Australian population infected in {days_until_all_infected} days')
 plt.plot(np.unique(x), np.poly1d(np.polyfit(x, y, 1))(np.unique(x)))
 plt.plot(x,y)
 plt.show()
-
-## Plot the data
-#fig = go.Figure()
-#
-#for country in list(df_gt_100):
-#    fig.add_trace(go.Scatter(
-#        x=df_gt_100.index,
-#        y=np.log10(df_gt_100[country]),
-#        name=country,
-#    ))
-#
-#fig.show()
