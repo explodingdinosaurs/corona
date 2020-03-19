@@ -1,4 +1,4 @@
-"""Plot only log10 for Countries that have over 300 cases today.
+"""Plot only log2 for Countries that have over 300 cases today.
 
 Linear behaviour indicated exponential growth
 """
@@ -39,14 +39,14 @@ fig = go.Figure()
 for country in list(df_relevant):
     fig.add_trace(go.Scatter(
         x=df_relevant.index,
-        y=np.log10(df_relevant[country]),
+        y=np.log2(df_relevant[country]),
         name=country,
     ))
 
 # Make the plot look fancy. 
 fig.update_layout(title='SARS-CoV-2 Cases in Logarithmic scale: Linear behaviour indicates exponential growth',
                    xaxis_title='Day Number',
-                   yaxis_title='Log10(Cases)')
+                   yaxis_title='Log2(Cases)')
     
 fig.show()
 
