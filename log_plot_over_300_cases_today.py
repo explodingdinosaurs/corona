@@ -33,6 +33,8 @@ df_relevant = df_relevant.reset_index(drop=True)
 # Drop the International data.. is it cruise ships???
 df_relevant = df_relevant.drop(['International'], axis=1)
 
+print(df)
+
 # Plot the data
 fig = go.Figure()
 

@@ -28,18 +28,32 @@ for state in list(df):
 # Let's plot this mofo    
 fig = go.Figure()
 
+population = {
+    'NSW':8089526,
+    'Qld':5095100,
+    'Vic':6594804,
+    'SA':1751693,
+    'WA':2621680,
+    'Tas':534281,
+    'ACT':426709,
+    'NT':245869,
+    'Total':25359662,
+    'New Cases':25359662, 
+}
+
 # Plot all the states!
 for state in list(df):
+    
     fig.add_trace(go.Scatter(
         x=df.index,
-        y=df[state],
+        y=pd.to_numeric(df[state]).divide(population[state])*100000,
         name=state,
     ))
 
 # Make the plot look fancy. 
 fig.update_layout(title='COVID-19 Cases by State/Territory in Austalia',
                    xaxis_title='Date',
-                   yaxis_title='Cases')
+                   yaxis_title='Cases per 100,000 people')
 
     
 fig.show()
