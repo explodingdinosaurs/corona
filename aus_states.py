@@ -11,6 +11,11 @@ df = pd.read_html(html)[6]
 df = df.rename(columns={'Unnamed: 0': 'date'})
 df = df.set_index('date')
 
+# Drop reference columns
+for state in list(df):
+    if state[-2:] == '.1':
+        df = df.drop([state], axis=1)
+
 # Clean the references from the data
 for state in list(df):
     try:

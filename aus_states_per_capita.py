@@ -10,10 +10,18 @@ df = pd.read_html(html)[6]
 df = df.rename(columns={'Unnamed: 0': 'date'})
 df = df.set_index('date')
 
+# Drop reference columns
+for state in list(df):
+    if state[-2:] == '.1':
+        df = df.drop([state], axis=1)
+
 # Clean the references from the data
+# Clean % signs from % growth column
 for state in list(df):
     try:
         df[state] = df[state].str.replace(r"\[.*\]","")
+        df[state] = df[state].str.replace(r"%","")
+        
     except AttributeError:
         pass
 
@@ -38,12 +46,15 @@ population = {
     'ACT':426709,
     'NT':245869,
     'Total':25359662,
-    'New Cases':25359662, 
+    'Newcases':25359662, 
+    '%growth':25359662, 
 }
+
+print(list(df))
 
 # Plot all the states!
 for state in list(df):
-    
+    print(state)
     fig.add_trace(go.Scatter(
         x=df.index,
         y=pd.to_numeric(df[state]).divide(population[state])*100000,
