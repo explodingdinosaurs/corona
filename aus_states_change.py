@@ -41,21 +41,18 @@ df_minus_1 = df.drop(df.tail(1).index)
 # Drop the first row of the dataframe
 df = df.drop(df.head(1).index)
 
-
+# Lets copy the index
 index = df.index
+
+# Drop the index from both
 df = df.reset_index(drop=True)
 df_minus_1 = df_minus_1.reset_index(drop=True)
-
-print(df)
-print(df_minus_1)
 
 # Subtract the two
 df = df.subtract(df_minus_1)
 
 # Put the index back in
 df.index = index
-print(df)
-
 
 # Let's plot this mofo    
 fig = go.Figure()
