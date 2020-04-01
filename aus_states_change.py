@@ -6,7 +6,7 @@ import re
 
 # Get the data
 html = wp.page("2020_coronavirus_pandemic_in_Australia").html().encode("UTF-8")
-df = pd.read_html(html)[6]
+df = pd.read_html(html)[7]
 
 df = df.rename(columns={'Unnamed: 0': 'date'})
 df = df.set_index('date')
