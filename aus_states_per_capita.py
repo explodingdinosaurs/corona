@@ -1,45 +1,6 @@
-import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-import wikipedia as wp
-import re
-
-# Get the data
-html = wp.page("2020_coronavirus_pandemic_in_Australia").html().encode("UTF-8")
-df = pd.read_html(html)[4]
-
-df = df.rename(columns={'Unnamed: 0': 'date'})
-df = df.set_index('date')
-
-# Drop all the rows with NaN index. This cleans up column titles at the
-# bottom of the table 
-df = df.drop([np.nan])
-
-# Drop reference columns
-for state in list(df):
-    if state[-2:] == '.1':
-        df = df.drop([state], axis=1)
-
-# Clean the references from the data
-# Clean % signs from % growth column
-for state in list(df):
-    try:
-        df[state] = df[state].str.replace(r"\[.*\]","")
-        df[state] = df[state].str.replace(r"%","")
-        
-    except AttributeError:
-        pass
-
-# Clean the references from the column names
-for state in list(df):
-    try:
-        new_state = re.sub("[\(\[].*?[\)\]]", "", state)
-        df = df.rename(columns={state: new_state})
-    except AttributeError:
-        pass
-
-# Let's plot this mofo    
-fig = go.Figure()
+import prepare_data
 
 population = {
     'NSW':8089526,
@@ -51,24 +12,66 @@ population = {
     'ACT':426709,
     'NT':245869,
     'Total':25359662,
-    'Newcases':25359662, 
-    '%growth':25359662, 
-    'DeathsNationally':25359662, 
+    'DeathsNationally':25359662,
 }
 
+df_aus = prepare_data.australia()
+df_aus_change = prepare_data.australia_change(df_aus)
+
+# Let's plot this mofo    
+fig = go.Figure()
+
 # Plot all the states!
-for state in list(df):
+for state in list(df_aus):
     fig.add_trace(go.Scatter(
-        x=df.index,
-        y=pd.to_numeric(df[state]).divide(population[state])*100000,
+        x=df_aus.index,
+        y=pd.to_numeric(df_aus[state]).divide(population[state])*100000,
         name=state,
     ))
 
 # Make the plot look fancy. 
-fig.update_layout(title='COVID-19 Cases by State/Territory in Austalia',
+fig.update_layout(title='Per Capita COVID-19 Cases by State/Territory in Austalia',
                    xaxis_title='Date',
                    yaxis_title='Cases per 100,000 people')
-
-    
 fig.show()
 
+# Let's plot this mofo
+fig_change = go.Figure()
+
+# Plot all the states!
+for state in list(df_aus_change):
+    fig_change.add_trace(go.Scatter(
+        x=df_aus_change.index,
+        y=pd.to_numeric(df_aus_change[state]).divide(population[state])*100000,
+        name=state,
+    ))
+
+# Make the plot look fancy.
+fig_change.update_layout(title='Per Capita Change in COVID-19 Cases by State/Territory in Austalia',
+                         xaxis_title='Date',
+                         yaxis_title='Change in cases per 100,000 people')
+fig_change.show()
+
+
+# Roll those numbers over a week
+df_aus_change = df_aus_change.rolling(7).mean()
+
+# Let's plot this mofo
+fig_rolling_change = go.Figure()
+
+# Plot all the states!
+for state in list(df_aus):
+    fig_rolling_change.add_trace(go.Scatter(
+        x=df_aus_change.index,
+        y=pd.to_numeric(df_aus_change[state]).divide(population[state])*100000,
+        name=state,
+    ))
+
+# Make the plot look fancy.
+fig_rolling_change.update_layout(
+    title='7-day Rolling Per Capita Change in COVID-19 Cases by State/Territory in Austalia',
+    xaxis_title='Date',
+    yaxis_title='Change in cases per 100,000 people'
+)
+
+fig_rolling_change.show()

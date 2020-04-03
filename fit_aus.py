@@ -12,13 +12,23 @@ df = df.set_index('date')
 
 df=df[['Australia']]
 
-df[['Australia_log']] = np.log10(df[['Australia']])
+df[['Australia_log']] = np.log2(df[['Australia']])
 
 df = df.reset_index(drop=True)
 y = np.array(df['Australia_log'])
-y = y[40:]
+#y = y[40:]
 x = np.array(df.index)
-x = x[:y.shape[0]]
+#x = x[40:]
+
+list_dys = []
+
+# Naive doubling rate
+for i in range(y.shape[0]-1):
+    list_dy = y[i+1] - y[i]
+    list_dys.append(list_dy)
+
+dy = np.array(list_dys)
+print(dy)
 
 # Fit with polyfit
 # log(cases) = a*days + b
@@ -27,12 +37,8 @@ a, b = np.polyfit(x, y, 1)
 print(f'a: {a}')
 print(f'b: {b}')
 
-# Solve for australian population
-# (log(cases)-b)/a = x
-days = (np.log10(24.6E6) - b)/a
-days_until_all_infected = days-x.shape[0]
+print(f'Doubling rate: {a} days.')
 
-print(f'entire Australian population infected in {days_until_all_infected} days')
 plt.plot(np.unique(x), np.poly1d(np.polyfit(x, y, 1))(np.unique(x)))
 plt.plot(x,y)
 plt.show()
