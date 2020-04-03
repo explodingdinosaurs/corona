@@ -6,9 +6,14 @@ import re
 
 # Get the data
 html = wp.page("2020_coronavirus_pandemic_in_Australia").html().encode("UTF-8")
-df = pd.read_html(html)[7]
+df = pd.read_html(html)[4]
+
 df = df.rename(columns={'Unnamed: 0': 'date'})
 df = df.set_index('date')
+
+# Drop all the rows with NaN index. This cleans up column titles at the
+# bottom of the table 
+df = df.drop([np.nan])
 
 # Drop reference columns
 for state in list(df):
@@ -38,23 +43,21 @@ fig = go.Figure()
 
 population = {
     'NSW':8089526,
-    'Qld':5095100,
-    'Vic':6594804,
+    'QLD':5095100,
+    'VIC':6594804,
     'SA':1751693,
     'WA':2621680,
-    'Tas':534281,
+    'TAS':534281,
     'ACT':426709,
     'NT':245869,
     'Total':25359662,
     'Newcases':25359662, 
     '%growth':25359662, 
+    'DeathsNationally':25359662, 
 }
-
-print(list(df))
 
 # Plot all the states!
 for state in list(df):
-    print(state)
     fig.add_trace(go.Scatter(
         x=df.index,
         y=pd.to_numeric(df[state]).divide(population[state])*100000,

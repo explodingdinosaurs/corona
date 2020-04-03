@@ -6,16 +6,20 @@ import re
 
 # Get the data
 html = wp.page("2020_coronavirus_pandemic_in_Australia").html().encode("UTF-8")
-df = pd.read_html(html)[5]
+df = pd.read_html(html)[4]
+
 df = df.rename(columns={'Unnamed: 0': 'date'})
 df = df.set_index('date')
 
+# Drop all the rows with NaN index. This cleans up column titles at the
+# bottom of the table 
+df = df.drop([np.nan])
 
 # Drop reference columns
 for state in list(df):
     if state[-2:] == '.1':
         df = df.drop([state], axis=1)
-        
+
 # Clean the references from the data
 for state in list(df):
     try:
@@ -80,7 +84,6 @@ fig.show()
 df = df.rolling(7).mean()
 df_change = df_change.rolling(7).mean()
 
-
 # Let's plot this mofo    
 rolling_fig = go.Figure()
 
@@ -98,3 +101,19 @@ rolling_fig.update_layout(title='7-day Rolling Mean of Growth vs Cases of Covid-
                    yaxis_title='log10(New Cases)')
     
 rolling_fig.show()
+
+
+# Plot rolling data per capita
+population = {
+    'NSW':8089526,
+    'QLD':5095100,
+    'VIC':6594804,
+    'SA':1751693,
+    'WA':2621680,
+    'TAS':534281,
+    'ACT':426709,
+    'NT':245869,
+    'Total':25359662,
+    'DeathsNationally':25359662, 
+}
+

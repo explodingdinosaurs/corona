@@ -6,10 +6,14 @@ import re
 
 # Get the data
 html = wp.page("2020_coronavirus_pandemic_in_Australia").html().encode("UTF-8")
-df = pd.read_html(html)[7]
+df = pd.read_html(html)[4]
 
 df = df.rename(columns={'Unnamed: 0': 'date'})
 df = df.set_index('date')
+
+# Drop all the rows with NaN index. This cleans up column titles at the
+# bottom of the table 
+df = df.drop([np.nan])
 
 # Drop reference columns
 for state in list(df):
