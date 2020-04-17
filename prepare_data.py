@@ -19,13 +19,22 @@ def australia() -> pd.DataFrame:
     df_aus = dataloaders.load_correct_table('2020_coronavirus_pandemic_in_Australia', first_col_name)
     df_aus = df_aus.rename(columns={'Unnamed: 0': 'date'})
     df_aus = df_aus.set_index('date')
-
+    
     # Clean the data
     df_aus = cleaners.remove_column_names_at_bottom(df_aus)
     df_aus = cleaners.drop_reference_columns(df_aus)
     df_aus = cleaners.clean_references_from_data(df_aus)
     df_aus = cleaners.clean_references_from_column_names(df_aus)
+    df_aus = cleaners.clean_references_from_index(df_aus)
+    rows_to_drop = ['Deaths by State/Territory']
+    df_aus = df_aus.drop(rows_to_drop)
 
+    # Remove commas from data
+    df_aus = cleaners.remove_string_from_data(df_aus, ',')
+    
+    # Drop rows that contain useless information
+    df_aus = df_aus[~df_aus.index.str.contains("after")]
+        
     # Drop newcases and % growth
     df_aus = df_aus.drop(['Newcases', '%growth'], axis=1)
 
