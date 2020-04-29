@@ -1,6 +1,5 @@
 """ Grabs data from a particular source and returns a cleaned version
 """
-
 import pandas as pd
 import cleaners
 import dataloaders
@@ -26,8 +25,6 @@ def australia() -> pd.DataFrame:
     df_aus = cleaners.clean_references_from_data(df_aus)
     df_aus = cleaners.clean_references_from_column_names(df_aus)
     df_aus = cleaners.clean_references_from_index(df_aus)
-    rows_to_drop = ['Deaths by State/Territory']
-    df_aus = df_aus.drop(rows_to_drop)
 
     # Remove commas from data
     df_aus = cleaners.remove_string_from_data(df_aus, ',')
